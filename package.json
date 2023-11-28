@@ -1,0 +1,18 @@
+{
+  "name": "aoc23",
+  "module": "index.ts",
+  "type": "module",
+  "scripts": {
+    "scaffold": "bun utils/scaffold.ts",
+    "day": "bun utils/runner.ts",
+    "day-timed": "bun utils/timed.ts",
+    "today": "bun utils/runner.ts today",
+    "today-timed": "bun utils/timed.ts today"
+  },
+  "devDependencies": {
+    "bun-types": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
