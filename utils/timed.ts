@@ -6,12 +6,20 @@ const solution = await import(`../src/${padded}/solution`);
 
 const file = Bun.file(`src/${padded}/${mode}.txt`);
 
+const timings: number[] = [];
+let result: unknown;
+
 const timed = (callback: () => void) => {
-  const t1 = Bun.nanoseconds();
-  const result = callback();
-  const t2 = Bun.nanoseconds();
+  Array(100)
+    .fill(0)
+    .forEach(() => {
+      const t1 = Bun.nanoseconds();
+      result = callback();
+      const t2 = Bun.nanoseconds();
+      timings.push(t2 - t1);
+    });
   console.log("output: ", result);
-  console.log("time: ", `${t2 - t1}ns`);
+  console.log("time: ", `${timings.reduce((p, c) => p + c, 0) / 100}ns`);
 };
 
 file.text().then((data) => {
