@@ -33,23 +33,24 @@ export const part1 = (data: string) => {
 export const part2 = (data: string) => {
   return data
     .split("\n")
-    .map((game, index) =>
+    .map((game) =>
       game
         .split(": ")[1]
         .split("; ")
         .map((set) =>
           set.split(", ").reduce(
-            (acc, curr) => {
-              const [num, color] = curr.split(" ");
-              acc[color] = Math.max(acc[color], Number(num));
-
-              return acc;
+            (acc, pair) => {
+              const [num, color] = pair.split(" ");
+              return {
+                ...acc,
+                [color]: Math.max(acc[color], Number(num)),
+              };
             },
             { red: 0, green: 0, blue: 0 } as Record<string, number>
           )
         )
         .reduce(
-          (acc, curr, i) => {
+          (acc, curr) => {
             return {
               red: Math.max(acc.red, curr.red),
               blue: Math.max(acc.blue, curr.blue),
