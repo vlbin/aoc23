@@ -29,8 +29,10 @@ const replaceNumber = (num: string) => {
       const index = map.indexOf(slice);
       if (Number.isInteger(Number(slice))) {
         newNum += slice;
+        break;
       } else if (index > -1) {
         newNum += index + 1;
+        break;
       }
     }
   }
