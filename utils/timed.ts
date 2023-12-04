@@ -10,7 +10,7 @@ const timings: number[] = [];
 let result: unknown;
 
 const timed = (callback: () => void) => {
-  Array(100)
+  Array(10)
     .fill(0)
     .forEach(() => {
       const t1 = Bun.nanoseconds();
@@ -19,7 +19,10 @@ const timed = (callback: () => void) => {
       timings.push(t2 - t1);
     });
   console.log("output: ", result);
-  console.log("time: ", `${timings.reduce((p, c) => p + c, 0) / 100}ns`);
+  console.log(
+    "time: ",
+    `${timings.reduce((p, c) => p + c, 0) / 10 / 1000} microseconds`
+  );
 };
 
 file.text().then((data) => {
