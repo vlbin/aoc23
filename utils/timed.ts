@@ -21,7 +21,7 @@ const timed = (callback: () => void) => {
   console.log("output: ", result);
   console.log(
     "time: ",
-    `${timings.reduce((p, c) => p + c, 0) / 10 / 1000} microseconds`
+    `${timings.reduce((p, c) => p + c, 0) / 10} nanoseconds`
   );
 };
 
