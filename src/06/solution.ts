@@ -1,11 +1,9 @@
-const distance = (hold: number, time: number) => {
-  return hold * (time - hold);
-};
-
 const distances = (time: number, record: number) => {
-  return Array.from({ length: time + 1 })
-    .map((_, i) => distance(i, time))
-    .filter((dist) => dist > record).length;
+  const root = Math.sqrt(Math.pow(time / 2, 2) - (record + 1));
+  const x1 = Math.ceil(time / 2 - root);
+  const x2 = Math.floor(time / 2 + root);
+
+  return x2 - x1 + 1;
 };
 
 export const part1 = (data: string) => {
