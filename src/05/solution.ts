@@ -12,6 +12,16 @@ const map = (raw: number, translationMap: number[][]) => {
   return mapped;
 };
 
+const mapReverse = (out: number, translationMap: number[][]) => {
+  for (const [dst, src, range] of translationMap) {
+    if (dst <= out && dst + range > out) {
+      return out + src - dst;
+    }
+  }
+
+  return out;
+};
+
 export const part1 = (data: string) => {
   const [_seeds, ..._groups] = data.split("\n\n");
   const seeds = _seeds.split(": ")[1].split(" ").map(Number);
@@ -44,31 +54,21 @@ export const part2 = (data: string) => {
 
   const groups = _groups
     .map((group) => group.split("\n"))
-    .map(([_, ...maps]) => maps.map((map) => map.split(" ").map(Number)));
+    .map(([_, ...maps]) => maps.map((map) => map.split(" ").map(Number)))
+    .reverse();
 
-  const locations = seeds.map(([startSeed, endSeed]) => {
-    return [
-      groups.reduce((loc, curr) => {
-        return map(loc, curr);
-      }, startSeed),
-      groups.reduce((loc, curr) => {
-        return map(loc, curr);
-      }, endSeed),
-    ];
-  });
+  let found: number | undefined;
+  let i = 0;
+  while (!found) {
+    const out = groups.reduce((num, group) => {
+      return mapReverse(num, group);
+    }, i);
 
-  // let value = 1000000000;
-  // for (let [start, end] of seeds) {
-  //   while (start < end) {
-  //     const newValue = groups.reduce((loc, curr) => {
-  //       return map(loc, curr);
-  //     }, start);
+    if (seeds.some(([start, end]) => out >= start && out <= end)) {
+      found = i;
+    }
+    i++;
+  }
 
-  //     if (newValue < value) {
-  //       value = newValue;
-  //     }
-  //     start++;
-  //   }
-  // }
-  return locations;
+  return found;
 };
