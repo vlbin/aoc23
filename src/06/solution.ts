@@ -25,4 +25,12 @@ export const part1 = (data: string) => {
   }, 1);
 };
 
-export const part2 = (data: string) => {};
+export const part2 = (data: string) => {
+  const [time, record] = data
+    .split("\n")
+    .map((x) => x.split(":")[1])
+    .map((x) => x.replaceAll(" ", ""))
+    .map(Number);
+
+  return distances(time, record);
+};
