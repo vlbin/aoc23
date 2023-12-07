@@ -6,43 +6,22 @@ const mapSuit = (card: string, withJoker = false) =>
     : "TJQKA".indexOf(card) + 10;
 
 const group = (hand: number[]) =>
-  hand.reduce((values, card) => {
-    if (values[card]) {
-      values[card] += 1;
-    } else {
-      values[card] = 1;
-    }
-    return values;
-  }, {} as Record<string, number>);
+  hand.reduce(
+    (values, card) => ({
+      ...values,
+      [card]: (values[card] || 0) + 1,
+    }),
+    {} as Record<string, number>
+  );
 
-const five = (hand: number[]) =>
-  Object.values(group(hand)).some((v) => v === 5);
+const kind = (size: number) => (hand: number[]) =>
+  Object.values(group(hand)).some((v) => v === size);
 
-const four = (hand: number[]) =>
-  Object.values(group(hand)).some((v) => v === 4);
-
-const three = (hand: number[]) =>
-  Object.values(group(hand)).some((v) => v === 3);
-
-const twoPair = (hand: number[]) =>
-  Object.values(group(hand)).filter((value) => value === 2).length === 2;
-const pair = (hand: number[]) =>
-  Object.values(group(hand)).filter((value) => value === 2).length === 1;
+const pairs = (n: number) => (hand: number[]) =>
+  Object.values(group(hand)).filter((value) => value === 2).length === n;
 
 const highCard = (hand: number[]) =>
   Object.values(group(hand)).every((v) => v === 1);
-
-const comp = (
-  func: (hand: number[]) => boolean,
-  hand1: number[],
-  hand2: number[]
-) => {
-  const r1 = func(hand1);
-  const r2 = func(hand2);
-  if (r1 && !r2) return -1;
-  if (!r1 && r2) return 1;
-  return 0;
-};
 
 const compareCards = (hand1: number[], hand2: number[]) => {
   for (let i = 0; i < hand1.length; i++) {
@@ -65,21 +44,23 @@ const bestVariant = (hand: number[]) => {
     sorted.findIndex((f) => f[0] !== "1")
   );
 
-  const mod = hand.map((c) => (c === 1 ? Number(sorted[index][0]) : c));
-
-  return mod;
+  return hand.map((c) => (c === 1 ? Number(sorted[index][0]) : c));
 };
 
 const sorter = (hand1: [number, number[]], hand2: [number, number[]]) => {
   const mod1 = bestVariant(hand1[1]);
   const mod2 = bestVariant(hand2[1]);
 
-  return [five, four, three, twoPair, pair, highCard].reduce(
+  return [kind(5), kind(4), kind(3), pairs(2), pairs(1), highCard].reduce(
     (result, func, i, funcs) => {
       if (i === funcs.length - 1 && result === 0) {
         result = compareCards(hand1[1], hand2[1]);
       } else if (result === 0) {
-        return comp(func, mod1, mod2);
+        const r1 = func(mod1);
+        const r2 = func(mod2);
+        if (r1 && !r2) return -1;
+        if (!r1 && r2) return 1;
+        return 0;
       }
 
       return result;
@@ -100,9 +81,7 @@ export const part1 = (data: string) => {
         ]
     )
     .sort(sorter)
-    .reduce((acc, [bid], i, arr) => {
-      return (arr.length - i) * bid + acc;
-    }, 0);
+    .reduce((acc, [bid], i, arr) => (arr.length - i) * bid + acc, 0);
 };
 
 export const part2 = (data: string) => {
@@ -117,7 +96,5 @@ export const part2 = (data: string) => {
         ]
     )
     .sort(sorter)
-    .reduce((acc, [bid, hand], i, arr) => {
-      return (arr.length - i) * bid + acc;
-    }, 0);
+    .reduce((acc, [bid], i, arr) => (arr.length - i) * bid + acc, 0);
 };
